@@ -1,45 +1,722 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab4", "Lab4\Lab4.csproj", "{3ACCE3EA-259C-40E1-8F33-BCFE4308B822}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{754FC069-D67B-A9D7-50A1-8D1CA196D8F1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Num 6,7", "Num 6,7\Num 6,7.csproj", "{9ED2C4E0-6E56-4E06-A02E-78F161548A5F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chernovik", "Chernovik\Chernovik.csproj", "{07ACA417-EB0F-4720-B9F8-B25BD462184B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lab6", "lab6\lab6.csproj", "{3308895F-B4B9-4255-9328-8C5E587B5C61}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3ACCE3EA-259C-40E1-8F33-BCFE4308B822}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3ACCE3EA-259C-40E1-8F33-BCFE4308B822}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3ACCE3EA-259C-40E1-8F33-BCFE4308B822}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3ACCE3EA-259C-40E1-8F33-BCFE4308B822}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9ED2C4E0-6E56-4E06-A02E-78F161548A5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9ED2C4E0-6E56-4E06-A02E-78F161548A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9ED2C4E0-6E56-4E06-A02E-78F161548A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9ED2C4E0-6E56-4E06-A02E-78F161548A5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07ACA417-EB0F-4720-B9F8-B25BD462184B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07ACA417-EB0F-4720-B9F8-B25BD462184B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07ACA417-EB0F-4720-B9F8-B25BD462184B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07ACA417-EB0F-4720-B9F8-B25BD462184B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3308895F-B4B9-4255-9328-8C5E587B5C61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3308895F-B4B9-4255-9328-8C5E587B5C61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3308895F-B4B9-4255-9328-8C5E587B5C61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3308895F-B4B9-4255-9328-8C5E587B5C61}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FBE2762C-12D0-4669-ACF6-5EA0A3C1BECA}
-	EndGlobalSection
-EndGlobal
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+public static class ProblemSolver
+{
+    // Задание 1: Замена первого вхождения списка L1 на список L2 в списке L
+    public static List<T> ReplaceFirstOccurrence<T>(List<T> L, List<T> L1, List<T> L2)
+    {
+        if (L == null || L1 == null || L2 == null)
+            return L;
+
+        for (int i = 0; i <= L.Count - L1.Count; i++)
+        {
+            bool found = true;
+            for (int j = 0; j < L1.Count; j++)
+            {
+                if (!EqualityComparer<T>.Default.Equals(L[i + j], L1[j]))
+                {
+                    found = false;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                List<T> result = new List<T>();
+                result.AddRange(L.GetRange(0, i));
+                result.AddRange(L2);
+                result.AddRange(L.GetRange(i + L1.Count, L.Count - (i + L1.Count)));
+                return result;
+            }
+        }
+
+        return L;
+    }
+
+    // Задание 2: Сортировка элементов списка по возрастанию
+    public static List<T> SortList<T>(List<T> list) where T : IComparable<T>
+    {
+        if (list == null) return new List<T>();
+
+        List<T> sorted = new List<T>(list);
+        sorted.Sort();
+        return sorted;
+    }
+
+    // Задание 3: Анализ игр студентов
+    public static (List<string> allPlay, List<string> somePlay, List<string> nonePlay)
+        AnalyzeGames(List<string> allGames, Dictionary<string, List<string>> studentGames)
+    {
+        if (allGames == null || studentGames == null)
+            return (new List<string>(), new List<string>(), new List<string>());
+
+        var allPlay = new List<string>();
+        var somePlay = new List<string>();
+        var nonePlay = new List<string>();
+
+        foreach (var game in allGames)
+        {
+            int playersCount = studentGames.Values.Count(games => games.Contains(game));
+
+            if (playersCount == studentGames.Count)
+                allPlay.Add(game);
+            else if (playersCount > 0)
+                somePlay.Add(game);
+            else
+                nonePlay.Add(game);
+        }
+
+        return (allPlay, somePlay, nonePlay);
+    }
+
+    // Задание 4: Глухие согласные буквы, не входящие хотя бы в одно слово
+    public static List<char> FindVoicelessConsonants(string filePath)
+    {
+        if (!File.Exists(filePath))
+            return new List<char>();
+
+        string text = File.ReadAllText(filePath, Encoding.UTF8).ToLower();
+
+        // Глухие согласные в русском алфавите
+        char[] voicelessConsonants = { 'п', 'ф', 'к', 'т', 'ш', 'с', 'х', 'ц', 'ч', 'щ' };
+
+        // Разбиваем текст на слова (убираем знаки препинания)
+        char[] separators = " .,!?;:-()\"'\n\r\t".ToCharArray();
+        string[] words = text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+        // Если нет слов, возвращаем все согласные
+        if (words.Length == 0)
+            return voicelessConsonants.ToList();
+
+        var result = new List<char>();
+
+        foreach (char consonant in voicelessConsonants)
+        {
+            // Проверяем, что согласная НЕ входит хотя бы в одно слово
+            // То есть она отсутствует хотя бы в одном слове
+            bool notInAtLeastOneWord = words.Any(word => !word.Contains(consonant));
+
+            if (notInAtLeastOneWord)
+                result.Add(consonant);
+        }
+
+        result.Sort();
+        return result;
+    }
+
+    // Задание 5: Запись данных участников в файл
+    public static void CreateParticipantsFile(string filePath, List<string> participantsData)
+    {
+        try
+        {
+            using (StreamWriter writer = new StreamWriter(filePath, false, Encoding.UTF8))
+            {
+                // Первая строка - количество участников
+                writer.WriteLine(participantsData.Count);
+
+                // Последующие строки - данные участников
+                foreach (string participant in participantsData)
+                {
+                    writer.WriteLine(participant);
+                }
+            }
+            Console.WriteLine($"Файл успешно создан: {filePath}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при создании файла: {ex.Message}");
+        }
+    }
+
+    // Задание 5: Чтение данных участников из файла и определение победителей
+    public static List<string> FindWinnersFromFile(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            Console.WriteLine($"Файл не найден: {filePath}");
+            return new List<string>();
+        }
+
+        try
+        {
+            var participantsData = new List<string>();
+
+            using (StreamReader reader = new StreamReader(filePath, Encoding.UTF8))
+            {
+                // Читаем первую строку - количество участников
+                string firstLine = reader.ReadLine();
+                if (!int.TryParse(firstLine, out int participantCount) || participantCount <= 0)
+                {
+                    Console.WriteLine("Неверный формат количества участников");
+                    return new List<string>();
+                }
+
+                // Читаем данные участников
+                for (int i = 0; i < participantCount; i++)
+                {
+                    string line = reader.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        participantsData.Add(line);
+                    }
+                }
+            }
+
+            return FindWinners(participantsData);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
+            return new List<string>();
+        }
+    }
+
+    // Задание 5: Определение победителей (основная логика)
+    private static List<string> FindWinners(List<string> participantsData)
+    {
+        if (participantsData == null || participantsData.Count == 0)
+            return new List<string>();
+
+        var participants = new List<Participant>();
+
+        foreach (string line in participantsData)
+        {
+            var participant = ParseParticipant(line);
+            if (participant != null)
+                participants.Add(participant);
+        }
+
+        if (participants.Count == 0)
+            return new List<string>();
+
+        int maxScore = participants.Max(p => p.TotalScore);
+        var winners = participants.Where(p => p.TotalScore == maxScore)
+                                 .Select(p => $"{p.LastName} {p.FirstName}")
+                                 .ToList();
+
+        return winners;
+    }
+
+    // Вспомогательный класс для задания 5
+    private class Participant
+    {
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public int Score1 { get; set; }
+        public int Score2 { get; set; }
+        public int Score3 { get; set; }
+        public int TotalScore => Score1 + Score2 + Score3;
+    }
+
+    private static Participant ParseParticipant(string line)
+    {
+        if (string.IsNullOrWhiteSpace(line))
+            return null;
+
+        string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 5)
+            return null;
+
+        try
+        {
+            return new Participant
+            {
+                LastName = parts[0],
+                FirstName = parts[1],
+                Score1 = int.Parse(parts[2]),
+                Score2 = int.Parse(parts[3]),
+                Score3 = int.Parse(parts[4])
+            };
+        }
+        catch
+        {
+            return null;
+        }
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Тест1 задания 1
+        var list = new List<int> { 1, 2, 3, 4, 5, 3, 4, 5, -1, -5 };
+        var toReplace = new List<int> { 3, 4, 5, -1 };
+        var replacement = new List<int> { 9, 9, 9 };
+        var result1 = ProblemSolver.ReplaceFirstOccurrence(list, toReplace, replacement);
+        Console.WriteLine("Задание 1: " + string.Join(", ", result1));
+
+        // Тест1 задания 2
+        var unsorted = new List<int> { 5, 2, 8, 1, 9, -1, 0, 10012312, -14124 };
+        var result2 = ProblemSolver.SortList(unsorted);
+        Console.WriteLine("Задание 2: " + string.Join(", ", result2));
+
+        // Тест1 задания 3
+        var allGames = new List<string> { "CS:GO", "Dota 2", "Minecraft", "Fortnite", "qwer" };
+        var studentGames = new Dictionary<string, List<string>>
+        {
+            { "Иван", new List<string> { "CS2", "Dota 2" } },
+            { "Петр", new List<string> { "CS2", "Minecraft" } },
+            { "Мария", new List<string> { "CS2", "Dota 2", "Fortnite" } }
+        };
+        var result3 = ProblemSolver.AnalyzeGames(allGames, studentGames);
+        Console.WriteLine("Задание 3:");
+        Console.WriteLine("Все играют: " + string.Join(", ", result3.allPlay));
+        Console.WriteLine("Некоторые играют: " + string.Join(", ", result3.somePlay));
+        Console.WriteLine("Никто не играет: " + string.Join(", ", result3.nonePlay));
+
+        // задания 5 - создаем файл с данными
+        string filePath = "participants.txt";
+        var participantsData = new List<string>
+        {
+            "Петрова Ольга 25 18 16",
+            "Калиниченко Иван 14 19 15",
+            "Сидоров Петр 25 25 25",
+            "Иванова Мария 20 22 23",
+            "Кузнецов Алексей 25 25 25"  
+        };
+
+        // Создаем файл с данными
+        ProblemSolver.CreateParticipantsFile(filePath, participantsData);
+
+        // Читаем из файла и определяем победителей
+        var result5 = ProblemSolver.FindWinnersFromFile(filePath);
+        Console.WriteLine("Задание 5 - Победители: " + string.Join(", ", result5));
+        // Тест1 задания 4
+        try
+        {
+            // Создаем тестовый файл для задания 4
+            string textFilePath = "russian_text.txt";
+            File.WriteAllText(textFilePath, "программа код алгоритм", Encoding.UTF8);
+
+            var result4 = ProblemSolver.FindVoicelessConsonants(textFilePath);
+            Console.WriteLine("Задание 4 - Глухие согласные: " + string.Join(", ", result4));
+
+            // Дополнительные тесты для понимания
+            Console.WriteLine("\nДополнительные тесты:");
+
+            // Тест 1: Текст где все согласные есть в каждом слове
+            File.WriteAllText("test1.txt", "папа тата саса", Encoding.UTF8);
+            var test1 = ProblemSolver.FindVoicelessConsonants("test1.txt");
+            Console.WriteLine($"Текст 'папа тата саса': {string.Join(", ", test1)}");
+
+            // Тест 2: Текст где некоторые согласные есть не во всех словах
+            File.WriteAllText("test2.txt", "папа кок ффф", Encoding.UTF8);
+            var test2 = ProblemSolver.FindVoicelessConsonants("test2.txt");
+            Console.WriteLine($"Текст 'папа кок ффф': {string.Join(", ", test2)}");
+
+            // Тест 3: Одно слово
+            File.WriteAllText("test3.txt", "программа", Encoding.UTF8);
+            var test3 = ProblemSolver.FindVoicelessConsonants("test3.txt");
+            Console.WriteLine($"Текст 'программа': {string.Join(", ", test3)}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка в задании 4: {ex.Message}");
+        }
+    }
+}
+
+using System;
+
+namespace MoneyApp
+{
+    // Задание 6: Класс Money
+    public class Money
+    {
+        // Поля
+        private uint rubles;
+        private byte kopeks;
+
+        // Свойства с валидацией
+        public uint Rubles
+        {
+            get => rubles;
+            set => rubles = value;
+        }
+
+        public byte Kopeks
+        {
+            get => kopeks;
+            set
+            {
+                if (value >= 100)
+                    throw new ArgumentException("Копейки не могут быть >= 100");
+                kopeks = value;
+            }
+        }
+
+        // Конструкторы
+        public Money() : this(0, 0) { }
+
+        public Money(uint rubles, byte kopeks)
+        {
+            // Устанавливаем значения напрямую в поля, чтобы избежать валидации
+            this.rubles = rubles;
+            this.kopeks = kopeks;
+            Normalize();  // Затем нормализуем
+        }
+
+        public Money(uint totalKopeks)
+        {
+            Rubles = totalKopeks / 100;
+            Kopeks = (byte)(totalKopeks % 100);
+        }
+
+        // Добавление произвольного количества копеек
+        public Money AddKopeks(uint kopeksToAdd)
+        {
+            if (kopeksToAdd == 0)
+                return new Money(Rubles, Kopeks);
+
+            uint totalKopeks = (uint)(Rubles * 100 + Kopeks) + kopeksToAdd;
+            return new Money(totalKopeks);
+        }
+
+        // Вспомогательный метод для нормализации (рубли и копейки в правильном формате)
+        private void Normalize()
+        {
+            if (kopeks >= 100)
+            {
+                rubles += (uint)(kopeks / 100);
+                kopeks = (byte)(kopeks % 100);
+            }
+        }
+
+        // Перегрузка ToString()
+        public override string ToString()
+        {
+            return $"{Rubles} руб. {Kopeks:00} коп.";
+        }
+
+        // Задание 7: Унарные операции
+
+        // ++ добавление копейки
+        public static Money operator ++(Money money)
+        {
+            return money.AddKopeks(1);
+        }
+
+        // -- вычитание копейки
+        public static Money operator --(Money money)
+        {
+            uint totalKopeks = (uint)(money.Rubles * 100 + money.Kopeks);
+            if (totalKopeks == 0)
+                throw new InvalidOperationException("Нельзя вычесть копейку из нуля");
+
+            totalKopeks--;
+            return new Money(totalKopeks);
+        }
+
+        // Задание 7: Операции приведения типа
+
+        // Явное приведение к uint (рубли, копейки отбрасываются)
+        public static explicit operator uint(Money money)
+        {
+            return money.Rubles;
+        }
+
+        // Неявное приведение к double (копейки в рублях, целые рубли отбрасываются)
+        public static implicit operator double(Money money)
+        {
+            return money.Kopeks / 100.0;
+        }
+
+        // Задание 7: Бинарные операции
+
+        // Money + uint
+        public static Money operator +(Money money, uint kopeks)
+        {
+            return money.AddKopeks(kopeks);
+        }
+
+        // uint + Money
+        public static Money operator +(uint kopeks, Money money)
+        {
+            return money + kopeks;
+        }
+
+        // Money - uint
+        public static Money operator -(Money money, uint kopeks)
+        {
+            uint totalKopeks = (uint)(money.Rubles * 100 + money.Kopeks);
+            if (kopeks > totalKopeks)
+                throw new InvalidOperationException("Результат не может быть отрицательным");
+
+            totalKopeks -= kopeks;
+            return new Money(totalKopeks);
+        }
+
+        // uint - Money
+        public static Money operator -(uint kopeks, Money money)
+        {
+            uint moneyKopeks = (uint)(money.Rubles * 100 + money.Kopeks);
+            if (moneyKopeks > kopeks)
+                throw new InvalidOperationException("Результат не может быть отрицательным");
+
+            return new Money(kopeks - moneyKopeks);
+        }
+
+        // Money + Money
+        public static Money operator +(Money m1, Money m2)
+        {
+            uint totalKopeks = (uint)(m1.Rubles * 100 + m1.Kopeks + m2.Rubles * 100 + m2.Kopeks);
+            return new Money(totalKopeks);
+        }
+
+        // Money - Money
+        public static Money operator -(Money m1, Money m2)
+        {
+            uint total1 = (uint)(m1.Rubles * 100 + m1.Kopeks);
+            uint total2 = (uint)(m2.Rubles * 100 + m2.Kopeks);
+
+            if (total2 > total1)
+                throw new InvalidOperationException("Результат не может быть отрицательным");
+
+            return new Money(total1 - total2);
+        }
+
+        // Перегрузка Equals и GetHashCode для корректной работы
+        public override bool Equals(object obj)
+        {
+            if (obj is Money other)
+            {
+                return Rubles == other.Rubles && Kopeks == other.Kopeks;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Rubles, Kopeks);
+        }
+    }
+
+    // Тестирование
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("=== ТЕСТИРОВАНИЕ КЛАССА MONEY ===\n");
+
+            try
+            {
+                TestConstructors();
+                TestMethodFromTask6();
+                TestUnaryOperators();
+                TestConversionOperators();
+                TestBinaryOperators();
+                TestErrorCases();
+
+                Console.WriteLine("\nВсе тесты завершены успешно!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\n Произошла непредвиденная ошибка: {ex.Message}");
+                Console.WriteLine($"Тип ошибки: {ex.GetType().Name}");
+                Console.WriteLine($"Стек вызовов: {ex.StackTrace}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+
+        static void TestConstructors()
+        {
+            Console.WriteLine("1. ТЕСТИРОВАНИЕ КОНСТРУКТОРОВ:");
+
+            // Конструктор по умолчанию
+            Money m1 = new Money();
+            Console.WriteLine($"Конструктор по умолчанию: {m1}");
+
+            // Конструктор с параметрами
+            Money m2 = new Money(150, 75);
+            Console.WriteLine($"Конструктор с параметрами (150, 75): {m2}");
+
+            // Конструктор из общего количества копеек
+            Money m3 = new Money(12345); // 123 рубля 45 копеек
+            Console.WriteLine($"Конструктор из копеек (12345): {m3}");
+
+            // Конструктор с нормализацией
+            Money m4 = new Money(10, 150); // Должно стать 6 руб. 50 коп.
+            Console.WriteLine($"Конструктор с нормализацией (5, 150): {m4}");
+
+            Console.WriteLine();
+        }
+
+        static void TestMethodFromTask6()
+        {
+            Console.WriteLine("2. ТЕСТИРОВАНИЕ МЕТОДА ИЗ ЗАДАНИЯ 6 (AddKopeks):");
+
+            Money money = new Money(10, 50);
+            Console.WriteLine($"Исходная сумма: {money}");
+
+            // Добавление копеек
+            Money result1 = money.AddKopeks(25);
+            Console.WriteLine($"После добавления 25 копеек: {result1}");
+
+            // Добавление большого количества копеек (должны превратиться в рубли)
+            Money result2 = money.AddKopeks(150);
+            Console.WriteLine($"После добавления 150 копеек: {result2}");
+
+            // Добавление очень большого количества
+            Money result3 = money.AddKopeks(1000);
+            Console.WriteLine($"После добавления 1000 копеек: {result3}");
+
+            Console.WriteLine();
+        }
+
+        static void TestUnaryOperators()
+        {
+            Console.WriteLine("3. ТЕСТИРОВАНИЕ УНАРНЫХ ОПЕРАТОРОВ:");
+
+            Money money = new Money(5, 99);
+            Console.WriteLine($"Исходная сумма: {money}");
+
+            // Оператор ++
+            money++;
+            Console.WriteLine($"После money++: {money}");
+
+            // Оператор --
+            money--;
+            Console.WriteLine($"После money--: {money}");
+
+            // Тест переполнения копеек при ++
+            Money edgeCase = new Money(0, 99);
+            edgeCase++;
+            Console.WriteLine($"0 руб. 99 коп. после ++: {edgeCase}");
+
+            Console.WriteLine();
+        }
+
+        static void TestConversionOperators()
+        {
+            Console.WriteLine("4. ТЕСТИРОВАНИЕ ОПЕРАЦИЙ ПРИВЕДЕНИЯ ТИПА:");
+
+            Money money = new Money(123, 45);
+            Console.WriteLine($"Исходная сумма: {money}");
+
+            // Явное приведение к uint (рубли)
+            uint rublesOnly = (uint)money;
+            Console.WriteLine($"Явное приведение к uint (рубли): {rublesOnly}");
+
+            // Неявное приведение к double (копейки в рублях)
+            double kopeksInRubles = money;
+            Console.WriteLine($"Неявное приведение к double (копейки в рублях): {kopeksInRubles:F2}");
+
+            // Тест с нулевыми копейками
+            Money money2 = new Money(100, 0);
+            double zeroKopeks = money2;
+            Console.WriteLine($"100 руб. 0 коп. в double: {zeroKopeks:F2}");
+
+            Console.WriteLine();
+        }
+
+        static void TestBinaryOperators()
+        {
+            Console.WriteLine("5. ТЕСТИРОВАНИЕ БИНАРНЫХ ОПЕРАТОРОВ:");
+
+            Money m1 = new Money(10, 50);
+            Money m2 = new Money(2, 75);
+            Console.WriteLine($"m1 = {m1}, m2 = {m2}");
+
+            // Money + uint
+            Money result1 = m1 + 25;
+            Console.WriteLine($"m1 + 25 = {result1}");
+
+            // uint + Money
+            Money result2 = 100 + m1;
+            Console.WriteLine($"100 + m1 = {result2}");
+
+            // Money - uint
+            Money result3 = m1 - 30;
+            Console.WriteLine($"m1 - 30 = {result3}");
+
+            // Money + Money
+            Money result4 = m1 + m2;
+            Console.WriteLine($"m1 + m2 = {result4}");
+
+            // Money - Money
+            Money result5 = m1 - m2;
+            Console.WriteLine($"m1 - m2 = {result5}");
+
+            Console.WriteLine();
+        }
+
+        static void TestErrorCases()
+        {
+            Console.WriteLine("6. ТЕСТИРОВАНИЕ ОШИБОЧНЫХ СЛУЧАЕВ:");
+
+            // Тест 1: Невалидные копейки через свойство
+            try
+            {
+                Console.WriteLine("Попытка установить 200 копеек через свойство:");
+                Money money = new Money(10, 50);
+                money.Kopeks = 200; // Должно вызвать ошибку
+                Console.WriteLine(" Ожидалась ошибка, но операция выполнена: " + money);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($" Ошибка перехвачена: {ex.Message}");
+            }
+
+            // Тест 2: Вычитание из нуля
+            try
+            {
+                Console.WriteLine("\nПопытка вычесть из нуля:");
+                Money zero = new Money();
+                zero--;
+                Console.WriteLine(" Ожидалась ошибка, но операция выполнена: " + zero);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($" Ошибка перехвачена: {ex.Message}");
+            }
+
+            // Тест 3: Вычитание большего количества
+            try
+            {
+                Console.WriteLine("\nПопытка вычесть 200 из 1 рубля:");
+                Money small = new Money(1, 0);
+                Money result = small - 200;
+                Console.WriteLine(" Ожидалась ошибка, но операция выполнена: " + result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($" Ошибка перехвачена: {ex.Message}");
+            }
+
+            // Тест 4: Вычитание денег (большее из меньшего)
+            try
+            {
+                Console.WriteLine("\nПопытка вычесть большую сумму из меньшей:");
+                Money small = new Money(1, 0);
+                Money large = new Money(5, 0);
+                Money result = small - large;
+                Console.WriteLine(" Ожидалась ошибка, но операция выполнена: " + result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($" Ошибка перехвачена: {ex.Message}");
+            }
+
+            // Тест 5: uint - Money (отрицательный результат)
+            try
+            {
+                Console.WriteLine("\nПопытка 50 - Money(100, 0):");
+                Money result = 50 - new Money(100, 0);
+                Console.WriteLine(" Ожидалась ошибка, но операция выполнена: " + result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($" Ошибка перехвачена: {ex.Message}");
+            }
+
+            Console.WriteLine();
+        }
+    }
+}
